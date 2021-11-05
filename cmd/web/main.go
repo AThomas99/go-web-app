@@ -14,6 +14,8 @@ const portNumber = ":8080"
 
 
 func main() {
+
+
 	var app config.AppConfig
 
 	tc ,err := render.CreateTemplateCache()
@@ -29,10 +31,14 @@ func main() {
 
 	render.NewTemplates(&app)
 
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about", handlers.Repo.About)
-
 	fmt.Println("Starting application on port number: ", portNumber)
-	http.ListenAndServe(portNumber, nil)
 
+	// srv - server variable for server properties
+	srv := http.Server{
+		Addr: portNumber,
+		Handler: routes(&app),
+	}
+	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		log.Fatal(err)
+	}
 }
